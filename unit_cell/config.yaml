@@ -1,0 +1,68 @@
+# The unit cell generator configuration file
+#
+#
+
+# Precision: single/double/longdouble
+
+# Load preminimized PFC solid profile
+source:
+  type: file
+  name: './data/32x16/eps_0.100/alpha_0.000/beta_0.000/unit_sol.field'
+
+nx: 32
+ny: 16
+  
+# PFC parameters
+eps: '0.1'
+alpha: '0.0'
+beta: '0.0'
+
+# mu search parameters
+mu_min: '0.1948'
+mu_max: '0.195'
+
+fftw_wisdoms: 
+    - '/home/mike/Data/labdata/FFT/dev/32x16_1246.pkl'
+
+# Multiple minimization routines can be scheduled
+runs:
+  - precision: double
+    dt: '1.e-3'
+    mu_precision: '1e-10'
+
+    search_method: interpolate
+
+    fft_threads: 1
+
+    # Display
+    n_steps: 31
+    refresh_interval: 4
+
+    # Stopping criterion
+    target: 'psibar'
+    tol: '1e-13'
+    patience: 400
+
+    wisdom_only: true
+
+    
+  - precision: longdouble
+    dt: '1.e-3'
+    mu_precision: '1e-16'
+
+    search_method: interpolate
+
+    fft_threads: 1
+
+    # Display
+    n_steps: 31
+    refresh_interval: 4
+
+    # Stopping criterion
+    target: 'psibar'
+    tol: '1e-18'
+    patience: 400
+
+    wisdom_only: true
+
+
