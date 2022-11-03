@@ -2,12 +2,13 @@ import torusgrid  as tg
 import pfc_util as pfc
 import numpy as np
 import rich
-from config_parser import UnitCellSingleRunConfig
+
+from .config import UnitCellSingleRunConfig
 
 console = rich.get_console()
 
 
-def run(cfg: UnitCellSingleRunConfig,
+def run_single(cfg: UnitCellSingleRunConfig,
         mu_min: tg.FloatLike, mu_max: tg.FloatLike, 
         sol: tg.RealField2D):
 

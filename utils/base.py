@@ -5,42 +5,37 @@ import torusgrid as tg
 import pfc_util as pfc
 import pickle
 
-class BaseConfig:
-    def __init__(self, parent: InterfaceGenConfig, config: dict):
 
-        self.n_steps = int(config['n_steps'])
-        self.target = str(config['target'])
-        self.tol = parent.dtype(config['tol'])
-        self.patience = int(config['patience'])
-        self.refresh_interval = int(config['refresh_interval'])
 
-        self.fft_threads = int(config['fft_threads'])
-        self.wisdom_only = bool(config['wisdom_only'])
+class ConfigBase:
+    def __init__(self, config: dict):
+        ...
 
-class LongConfig:
-    def __init__(self, parent: InterfaceGenConfig, config: dict) -> None:
+class InterfaceConfig():
+    """
+    A configuration that specifies
 
-        self.mx = int(config['mx'])
-        self.my = int(config['my'])
-        self.width0 = parent.dtype(config['width0'])
-
-        self.n_steps = int(config['n_steps'])
-        self.target = str(config['target'])
-        self.tol = parent.dtype(config['tol'])
-        self.patience = int(config['patience'])
-        self.refresh_interval = int(config['refresh_interval'])
-
-        self.fft_threads = int(config['fft_threads'])
-        self.wisdom_only = bool(config['wisdom_only'])
+        nx, ny
+        eps, alpha, beta
+    """
 
 
 
-class InterfaceGenConfig:
+
+class InterfaceConfig():
+    """
+    A configuration that specifies
+
+        nx, ny
+        eps, alpha, beta
+        
+        na, nb  (i.e. angle)
+
+    """
     def __init__(self, config: dict):
 
         self.precision = tg.FloatingPointPrecision.cast(config['precision'])
         self.dtype = tg.get_real_dtype(config['precision'])
-
 
         self.eps = self.dtype(config['eps'])
         self.alpha = self.dtype(config['alpha'])
@@ -60,11 +55,7 @@ class InterfaceGenConfig:
 
         self.fps = int(config['fps'])
 
-        self.base = BaseConfig(self, config['base'])
-        self.long = LongConfig(self, config['long'])
-        
         self.file_prefix = f'{self.nx}x{self.ny}/eps_{config["eps"]}/alpha_{config["alpha"]}/beta_{config["beta"]}'
-
         self.file_prefix_with_angle = f'{self.file_prefix}/theta_{self.theta:.4f}'
 
         self.fftw_wisdoms = []
@@ -79,12 +70,4 @@ class InterfaceGenConfig:
 
         self.mu = self.log[-1].mu[-1]
 
-
-def parse_config(fname: str='./config.yaml') -> InterfaceGenConfig:
-
-    with open(fname, 'r') as f:
-        config = yaml.safe_load(f)
-
-    
-    return InterfaceGenConfig(config)
 

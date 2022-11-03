@@ -42,8 +42,6 @@ class UnitCellSingleRunConfig(Generic[T]):
         self.parent = parent
 
 
-
-
 class UnitCellSimulationConfig:
 
     def __init__(self, config: dict) -> None:
@@ -75,6 +73,7 @@ class UnitCellSimulationConfig:
             self.runs.append(UnitCellSingleRunConfig(self, run_config))
 
         self.savedir = f'{self.nx}x{self.ny}/eps_{self.eps}/alpha_{self.alpha}/beta_{self.beta}'
+
 
 def parse_config(fname: str = 'config.yaml'):
     with open(fname, 'r') as f:
