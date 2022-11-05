@@ -1,11 +1,27 @@
 
+# Introduction
 
-# unit_cell
+`pfc_interface` is a collection of python scripts based on `pfc-util` that
+generates, evolves, and stores PFC solid, liquid, and interface profiles.
+The principal objective is to measure the interfacial energy $\gamma$, interface width $w$, and 
+the anisotropy parameter $\alpha_gamma$.
 
+Currently it contains three main modules:
+
+- `unit_cell`: Generate liquid and solid unit cells in equilibrium
+- `gen_interface`: Generate interfaces
+- `run_interface`: Generate a
+
+
+```
+python main.py MODULE -c CONFIG [--dry]
+```
+
+
+# `unit_cell`
 
 
 # gen_interface
-
 This is the entry point of the interface module of NPFC/PFC6.
 Make sure data/eps_[epsilon]/alpha_[alpha]/ is populated with unit_sol.field and unit_liq.field
 
@@ -13,18 +29,18 @@ Generate a rotated long field for interface calculations (PFC6).
 
 ## Parameters:
 
-    - na, nb: orientation vector
-    - eps_str: PFC6 epsilon
-    - alpha: PFC6 alpha
-    - mu: chemical potential
+- na, nb: orientation vector
+- eps_str: PFC6 epsilon
+- alpha: PFC6 alpha
+- mu: chemical potential
 
-    - dt: time step
-    - inertia: RK4 inertia
-    - N_step: command line output time step interval
+- dt: time step
+- inertia: RK4 inertia
+- N_step: command line output time step interval
 
-    - Mx0, My: solid/liquid field elongation factors
+- Mx0, My: solid/liquid field elongation factors
 
-    - width0: Generated interface width
+- width0: Generated interface width
 
 
 
@@ -46,5 +62,9 @@ Generate a rotated long field for interface calculations (PFC6).
         - [file_prefix]/interface.field     interface field file
         - [file_prefix]/solid.field         solid field file
         - [file_prefix]/liquid.field        liquid field file
+
+
+# `run_interface`
+
 
 

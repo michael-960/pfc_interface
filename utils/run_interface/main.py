@@ -1,60 +1,89 @@
 import numpy as np
 import torusgrid as tg
 import pfc_util as pfc
+import rich
+import pyfftw
+from pathlib import Path
+
+from .config import parse_config
+
+from .data import get_interface_list
 
 
-def run(config_name: str):
-    dry = False
+def run(config_name: str, *, dry: bool = False):
+    console = rich.get_console()
+    if dry:
+        console.log('[bold bright_cyan]Dry run[/bold bright_cyan]')
 
-    fname = group_name
+    C = parse_config(config_name)
+
+    for wisdom in C.fftw_wisdoms:
+        pyfftw.import_wisdom(wisdom)
 
     if dry: print('dry run')
 
+    console.log(f'Saving directory: data/{C.file_prefix(True)}')
 
-    ifc = tg.load(tg.RealField2D, f'{file_prefix}/interface.field')
-    solid = tg.load(tg.RealField2D, f'{file_prefix}/solid.field')
-    liquid = tg.load(tg.RealField2D, f'{file_prefix}/liquid.field')
+    ifc = tg.load(tg.RealField2D, f'./data/{C.file_prefix(True)}/interface.field')
+    solid = tg.load(tg.RealField2D, f'./data/{C.file_prefix(True)}/solid.field')
+    liquid = tg.load(tg.RealField2D, f'./data/{C.file_prefix(True)}/liquid.field')
 
-    delta_sol = tg.extend(solid, Mx_delta, My)
-    delta_liq = tg.extend(liquid, Mx_delta, My)
+    delta_sol = tg.extend(solid, (C.mx_delta, C.my))
+    delta_liq = tg.extend(liquid, (C.mx_delta, C.my))
 
     ######################################################################################################
+    ifc_loaders = get_interface_list(f'./data/{C.file_prefix(True)}/interfaces')
 
-    try:
-        group = pfc.load_pfc_group(f'{file_prefix}/{fname}.pfcgroup')
-        model_previous = group.get_sorted_models('Lx')[-1]
-        ifc = model_previous.field
-        N = len(group.get_names())
-        i = N
-        print(f'continuing in {file_prefix}/, found {N} interface fields')
+    n_ifcs = len(ifc_loaders)
+    i = n_ifcs
+    
+    if n_ifcs > 0:
+        console.log(f'continuing in data/{C.file_prefix(True)}/interfaces/, found {n_ifcs} interface fields')
+        ifc = ifc_loaders[-1]()
+    else:
+        console.log(f'No previous interfaces found, starting fresh')
+        Path(f'data/{C.file_prefix(True)}/interfaces').mkdir(exist_ok=True)
 
-    except FileNotFoundError as e:
-        group = pfc.PFCGroup()
-        print(f'{file_prefix}/: empty')
-        i = 0
+    def minim_supplier(field: tg.RealField2D):
+        m = pfc.pfc6.NonlocalConservedRK4(field, C.dt, C.eps_, C.alpha_, C.beta_)
+        m.initialize_fft(
+                threads=C.fft_threads,
+                wisdom_only=C.wisdom_only,
+                destroy_input=True)
+        return m
 
-    print(file_prefix)
-
-    def end_program(x: dn.FancyEvolver):
-        x.set_continue_flag(False)
-        raise KeyboardInterrupt
+    hooks = pfc.toolkit.get_pfc_hooks(
+        state_function_cls=pfc.pfc6.StateFunction,
+        display_digits=-round(np.log10(C.tol)),
+        extra_display_digits=2,
+        title_params=['eps', 'alpha', 'beta', 'R', 'M', 'dt'],
+        display_params=['Lx', 'Ly', 'psibar', 'f', 'F'],
+        refresh_interval=C.refresh_interval,
+        detect_slow=(C.target, C.tol, C.patience),
+        fps=C.fps
+    )
 
     while True:
-        print(f'{i+1}')
-        model, ifc2 = routine.evolve_and_elongate_interface(ifc, delta_sol, delta_liq, 
-                minimizer_supplier=minim_supplier,
-                N_steps=N_steps, N_epochs=None, 
-                interrupt_handler=end_program,
-                display_format=dfmt, callbacks=[es_F], verbose=False)
+        console.rule()
+        console.log(f'Evolving interface {i}')
+        console.log(f'size={ifc.size} shape={ifc.shape}')
 
-        dim1 = ifc.get_dimensions()
-        dim2 = ifc2.get_dimensions()
-        print(f'evolved L({dim1[0]:.4f}, {dim1[1]:.4f}) N({dim1[2]}, {dim1[3]})')
-        print(f'elongated to L({dim2[0]:.4f}, {dim2[1]:.4f}) N({dim2[2]}, {dim2[3]})')
-        group.put(model, f'long_{i:03d}')
+        ifc2 = pfc.toolkit.evolve_and_elongate_interface(
+            ifc, delta_sol, delta_liq,     
+            minimizer_supplier=minim_supplier,
+            n_steps=C.n_steps, hooks=hooks,
+            verbose=True
+        )
+
+        console.log(f'evolved size={ifc.size} shape={ifc.shape}')
+        console.log(f'elongated to size={ifc2.size} shape={ifc2.shape}')
+
         if not dry:
-            group.save(f'{file_prefix}/{fname}')
-            print(f'saved group to {file_prefix}/{fname}')
+            field_path = f'data/{C.file_prefix(True)}/interfaces/{i:04d}.field'
+            tg.save(ifc, field_path)
+            console.log(f'saved interface to {field_path}')
+
         ifc = ifc2
         i += 1
+
 

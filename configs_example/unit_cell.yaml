@@ -3,11 +3,13 @@
 #
 # Precision: single/double/longdouble
 
+
 # Load preminimized PFC solid profile
 source:
   type: file
   name: './data/32x16/eps_0.100/alpha_0.000/beta_0.000/unit_sol.field'
 
+# dimensions (shape)
 nx: 32
 ny: 16
   
@@ -20,12 +22,17 @@ beta: '1.0'
 mu_min: '0.17'
 mu_max: '0.193'
 
+
+# a list of wisdom files to use
 fftw_wisdoms: 
     - '/home/mike/Data/labdata/FFT/turnbull2/32x16_1246.pkl'
+
+
 
 # Multiple minimization routines can be scheduled
 runs:
   - precision: double
+
     dt: '1.e-3'
     mu_precision: '1e-10'
 
@@ -44,8 +51,12 @@ runs:
 
     wisdom_only: true
 
+    # Whether to expand the range of mu after run.
+    expand_range: '1e-9'
+
     
   - precision: longdouble
+
     dt: '1.e-3'
     mu_precision: '1e-16'
 
@@ -63,5 +74,7 @@ runs:
     patience: 400
 
     wisdom_only: true
+
+    expand_range: '0.'
 
 

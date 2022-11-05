@@ -1,15 +1,16 @@
-# live display
-fps: 8
 
 precision: double
 
+# The initial shape 
 nx: 32
 ny: 16
 
+# PFC parameters
 eps: '0.1'
 alpha: '0.0'
 beta: '0.0'
 
+# 
 na: -1
 nb: 1
 
@@ -19,35 +20,42 @@ fftw_wisdoms:
   - '/home/mike/Data/labdata/FFT/turnbull2/4096x32_246.pkl'
   - '/home/mike/Data/labdata/FFT/turnbull2/32x16_1246.pkl'
 
-# liquid solid small field minimization
+# liquid solid base fields minimization
 base:
-  n_steps: 31
 
   target: 'psibar'
   tol: '1e-13'
   patience: 400
 
   refresh_interval: 4
+  n_steps: 31
+  fps: 8
 
   fft_threads: 1
   wisdom_only: true
 
 
-# liquid solid interface long field minimization
+# liquid, solid, & interface long fields minimization
 long:
+
+  # solid & liquid field extension factor
   mx: 128
   my: 2
-  width0: 40
 
-  n_steps: 31
-  
+  # can be a single number or a list
+  # if a list is given, the width with the least energy will be used
+  width: ['7','8','9','10','11','12','13','14','15','20','24']
+
   target: 'F'
   tol: '1e-14'
   patience: 100
 
   refresh_interval: 1
+  n_steps: 31
+  fps: 8
 
   fft_threads: 4
   wisdom_only: true
+
 
 

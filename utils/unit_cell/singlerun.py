@@ -8,9 +8,11 @@ from .config import UnitCellSingleRunConfig
 console = rich.get_console()
 
 
-def run_single(cfg: UnitCellSingleRunConfig,
-        mu_min: tg.FloatLike, mu_max: tg.FloatLike, 
-        sol: tg.RealField2D):
+def run_single(
+    cfg: UnitCellSingleRunConfig,
+    mu_min: tg.FloatLike, mu_max: tg.FloatLike, 
+    sol: tg.RealField2D
+):
 
     sol = tg.change_precision(
             sol, 
@@ -24,10 +26,12 @@ def run_single(cfg: UnitCellSingleRunConfig,
     console.log(f'mu min={np.format_float_scientific(mu_min, precision=-round(np.log10(cfg.mu_precision)))}')
     console.log(f'mu max={np.format_float_scientific(mu_max, precision=-round(np.log10(cfg.mu_precision)))}')
 
-    fef = pfc.pfc6.FreeEnergyFunctional(cfg.eps, cfg.alpha, cfg.beta)
+        
+    fef = pfc.pfc6.FreeEnergyFunctional(
+            cfg.eps_, cfg.alpha_, cfg.beta_)
 
     def relaxer_supplier(field: tg.RealField2D, /, mu: tg.FloatLike):
-        m = pfc.pfc6.StressRelaxer(field, cfg.dt, cfg.eps, cfg.alpha, cfg.beta, mu)
+        m = pfc.pfc6.StressRelaxer(field, cfg.dt, cfg.eps_, cfg.alpha_, cfg.beta_, mu)
         m.initialize_fft(
                     threads=cfg.fft_threads,
                     wisdom_only=cfg.wisdom_only, 
@@ -35,7 +39,7 @@ def run_single(cfg: UnitCellSingleRunConfig,
         return m
 
     def const_mu_supplier(field: tg.RealField2D, /, mu: tg.FloatLike):
-        m = pfc.pfc6.ConstantMuMinimizer(field, cfg.dt, cfg.eps, cfg.alpha, cfg.beta, mu)
+        m = pfc.pfc6.ConstantMuMinimizer(field, cfg.dt, cfg.eps_, cfg.alpha_, cfg.beta_, mu)
         m.initialize_fft(
                     threads=cfg.fft_threads,
                     wisdom_only=cfg.wisdom_only,
