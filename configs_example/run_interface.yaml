@@ -35,6 +35,10 @@ fftw_wisdoms:
   - /home/mike/Data/labdata/FFT/turnbull2/7168x32_1246.pkl
   - /home/mike/Data/labdata/FFT/turnbull2/7680x32_1246.pkl
   - /home/mike/Data/labdata/FFT/turnbull2/8192x32_1246.pkl
+  - /home/mike/Data/labdata/FFT/turnbull2/9216x32_1246.pkl
+  - /home/mike/Data/labdata/FFT/turnbull2/10240x32_1246.pkl
+  - /home/mike/Data/labdata/FFT/turnbull2/12288x32_1246.pkl
+
 
 n_steps: 31
 refresh_interval: 1

@@ -21,6 +21,12 @@ def run(config_path: str, CC: base.CommandLineConfig):
     console = get_console()
     C = parse_config(config_path)
 
+    calc_file = f'{C.file_path("angle")}/{G.CALC_FILE}'
+    if (not CC.dry) and (not CC.overwrite):
+        if base.json_has_key(calc_file, 'width'):
+            raise base.DataExistsError(f'File {calc_file} already has key \'width\'')
+
+
     ifcs_path = f'data/{C.file_prefix("angle")}/interfaces'
     ifcs = base.get_interface_list(ifcs_path)
     
@@ -45,10 +51,7 @@ def run(config_path: str, CC: base.CommandLineConfig):
     console.print('widths:')
     console.print(widths)
 
-
     if not CC.dry:
-        calc_file = f'{C.file_path("angle")}/{G.CALC_FILE}'
-
         base.put_val_into_json(
                 calc_file,
                 'widths',

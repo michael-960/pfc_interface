@@ -24,8 +24,8 @@ class InterfaceRunConfig(
         self.beta_ = self.to_float(self.beta)
 
 
-def parse_config(config_name: str = './config.yaml'):
-    with open(config_name, 'r') as f:
+def parse_config(config_path: str):
+    with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
     return InterfaceRunConfig(config)
 

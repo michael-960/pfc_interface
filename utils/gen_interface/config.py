@@ -37,13 +37,13 @@ class LongFieldConfig(
 
 @final
 class InterfaceGenConfig(
-        base.SpecifiesShape,
-        base.SpecifiesRotationAngle,
-        base.SpecifiesFFTWisdoms,
-        base.SpecifiesPFCParams,
-        base.SpecifiesPrecision,
-        base.ConfigBase
-    ):
+    base.SpecifiesShape,
+    base.SpecifiesRotationAngle,
+    base.SpecifiesFFTWisdoms,
+    base.SpecifiesPFCParams,
+    base.SpecifiesPrecision,
+    base.ConfigBase
+):
     def __init__(self, config: dict):
         super().__init__(config)
 
@@ -61,15 +61,15 @@ class InterfaceGenConfig(
             base.Fallback(config['long'], config, ['precision', 'dt'])
         )
 
-        with open(f'./data/{self.file_prefix()}/log.pkl', 'rb') as f:
+        with open(f'{self.file_path("pfc")}/log.pkl', 'rb') as f:
             self.log: List[pfc.toolkit.MuSearchRecord] = pickle.load(f)
 
         self.mu_ = self.log[-1].mu[-1]
 
 
-def parse_config(fname: str='./config.yaml') -> InterfaceGenConfig:
+def parse_config(config_path: str) -> InterfaceGenConfig:
 
-    with open(fname, 'r') as f:
+    with open(config_path, 'r') as f:
         config = yaml.safe_load(f)
 
     return InterfaceGenConfig(config)

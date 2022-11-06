@@ -3,11 +3,10 @@
 #
 # Precision: single/double/longdouble
 
-
 # Load preminimized PFC solid profile
 source:
-  type: file
-  name: './data/32x16/eps_0.100/alpha_0.000/beta_0.000/unit_sol.field'
+  type: static
+  name: '0.1'
 
 # dimensions (shape)
 nx: 32
@@ -16,11 +15,11 @@ ny: 16
 # PFC parameters
 eps: '0.1'
 alpha: '0.0'
-beta: '1.0'
+beta: '0.0'
 
 # mu search parameters
-mu_min: '0.17'
-mu_max: '0.193'
+mu_min: '0.194'
+mu_max: '0.196'
 
 
 # a list of wisdom files to use
@@ -34,13 +33,14 @@ runs:
   - precision: double
 
     dt: '1.e-3'
-    mu_precision: '1e-10'
+    mu_precision: '1e-13'
 
     search_method: interpolate
 
     fft_threads: 1
 
     # Display
+    fps: 8
     n_steps: 31
     refresh_interval: 4
 
@@ -52,29 +52,30 @@ runs:
     wisdom_only: true
 
     # Whether to expand the range of mu after run.
-    expand_range: '1e-9'
-
-    
-  - precision: longdouble
-
-    dt: '1.e-3'
-    mu_precision: '1e-16'
-
-    search_method: interpolate
-
-    fft_threads: 1
-
-    # Display
-    n_steps: 31
-    refresh_interval: 4
-
-    # Stopping criterion
-    target: 'psibar'
-    tol: '1e-18'
-    patience: 400
-
-    wisdom_only: true
-
     expand_range: '0.'
 
-
+    
+  # - precision: longdouble
+  #
+  #   dt: '1.e-3'
+  #   mu_precision: '1e-16'
+  #
+  #   search_method: interpolate
+  #
+  #   fft_threads: 1
+  #
+  #   # Display
+  #   fps: 8
+  #   n_steps: 31
+  #   refresh_interval: 4
+  #
+  #   # Stopping criterion
+  #   target: 'psibar'
+  #   tol: '1e-18'
+  #   patience: 400
+  #
+  #   wisdom_only: true
+  #
+  #   expand_range: '0.'
+  #
+  #

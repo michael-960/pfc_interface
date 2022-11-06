@@ -6,6 +6,7 @@ import rich
 import pyfftw
 
 from .config import parse_config
+import os
 
 from .. import base
 from ..base import CommandLineConfig
@@ -15,9 +16,6 @@ def run(
     config_path: str, CC: CommandLineConfig
 ):
     console = rich.get_console()
-    if CC.dry:
-        console.log('[bold bright_cyan]Dry run[/bold bright_cyan]')
-
 
     C = parse_config(config_path)
 
@@ -26,12 +24,15 @@ def run(
 
     fef = pfc.pfc6.FreeEnergyFunctional(C.eps_, C.alpha_, C.beta_)
 
-
     '''Log parameters'''
     console.rule(title='0. Config Parameters')
 
     savedir = C.file_path("pfc")
     savedir_with_angle = C.file_path("angle")
+    if not CC.dry:
+        base.check_dir_empty(savedir_with_angle, overwrite=CC.overwrite)
+
+
 
     console.log(f'reading from {savedir}')
     console.log(f'saving to {savedir_with_angle}')

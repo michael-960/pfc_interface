@@ -2,6 +2,7 @@ from typing import Any, Dict, List
 import torusgrid as tg
 from pathlib import Path
 import json
+import os
 
 
 class Fallback(Dict[str, Any]):
@@ -41,6 +42,16 @@ def put_val(d: Dict[str,Any], *keys: str, val: Any):
     node[keys[-1]] = val
 
 
+def has_key(d: Dict[str,Any], *keys: str):
+    node = d
+    for key in keys:
+        if key not in node.keys():
+            return False
+        node = node[key]
+    return True
+
+
+
 def put_val_into_json(
     path: str, *keys: str, val: Any,
     create_file: bool = True
@@ -58,6 +69,22 @@ def put_val_into_json(
 
     with open(path, 'w') as f:
         json.dump(data, f, indent=4)
+
+
+def json_has_key(
+    path: str, *keys: str,
+    allow_absent: bool = True
+):
+    if not Path(path).exists():
+        if allow_absent:
+            return False
+        else:
+            raise FileNotFoundError(path)
+
+    with open(path, 'r') as f:
+        data = json.load(f)
+    
+    return has_key(data, *keys)
 
 
 
@@ -83,5 +110,30 @@ def get_interface_list(path: str):
         ifcs = []
 
     return [FieldLoader(p) for p in ifcs]
+
+
+
+class DataExistsError(Exception): ...
+
+
+
+def check_dir_empty(
+    path: str, *, 
+    overwrite: bool,
+    absent_okay: bool = True
+):
+
+    pth = Path(path)
+
+    if pth.exists():
+        if not pth.is_dir():
+            raise NotADirectoryError(f'Saving location {path} is not a directory')
+
+        if not (os.listdir(str(pth)) == []):
+            if (not overwrite):
+                raise DataExistsError('Saving directory not empty')
+    else:
+        if not absent_okay:
+            raise FileNotFoundError(path)
 
 

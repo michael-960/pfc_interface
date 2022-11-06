@@ -8,7 +8,9 @@ ny: 16
 # PFC parameters
 eps: '0.1'
 alpha: '0.0'
-beta: '0.0'
+beta: '0.0' # no need to specify mu, it will be read from log.pkl
+
+
 
 # 
 na: -1
@@ -44,7 +46,7 @@ long:
 
   # can be a single number or a list
   # if a list is given, the width with the least energy will be used
-  width: ['7','8','9','10','11','12','13','14','15','20','24']
+  width: ['9','10','11','12','13','14','14.5','15','15.5','16']
 
   target: 'F'
   tol: '1e-14'
@@ -56,6 +58,5 @@ long:
 
   fft_threads: 4
   wisdom_only: true
-
 
 

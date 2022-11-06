@@ -4,6 +4,7 @@ import pfc_util as pfc
 import rich
 import pyfftw
 from pathlib import Path
+import shutil
 
 from .config import parse_config
 
@@ -16,15 +17,11 @@ from ..base import CommandLineConfig
 def run(config_path: str, CC: CommandLineConfig):
 
     console = rich.get_console()
-    if CC.dry:
-        console.log('[bold bright_cyan]Dry run[/bold bright_cyan]')
 
     C = parse_config(config_path)
 
     for wisdom in C.fftw_wisdoms:
         pyfftw.import_wisdom(wisdom)
-
-    if CC.dry: print('dry run')
 
     console.log(f'Saving directory: {C.file_path("angle")}')
 
@@ -36,7 +33,14 @@ def run(config_path: str, CC: CommandLineConfig):
     delta_liq = tg.extend(liquid, (C.mx_delta, C.my))
 
     ######################################################################################################
-    ifc_loaders = base.get_interface_list(f'{C.file_path("angle")}/{G.INTERFACES_DIR}')
+    savedir = f'{C.file_path("angle")}/{G.INTERFACES_DIR}'
+    if CC.overwrite:
+        console.input(f'[bold red]Passing --overwrite will erase all data under {savedir}, proceed?[/bold red]')
+        shutil.rmtree(savedir)
+        Path(savedir).mkdir()
+
+    ifc_loaders = base.get_interface_list(savedir)
+
 
     n_ifcs = len(ifc_loaders)
     i = n_ifcs

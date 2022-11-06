@@ -13,16 +13,13 @@ from .config import parse_config
 from .singlerun import run_single
 
 from ..base import CommandLineConfig
+from .. import base
 
 
 
 def run(config_name: str, CC: CommandLineConfig):
     console = rich.get_console()
     C = parse_config(config_name)
-
-    if CC.dry:
-        console.log('[bold bright_cyan]Dry run[/bold bright_cyan]')
-
 
     '''Load FFTW wisdoms'''
     for wisdom in C.fftw_wisdoms:
@@ -43,13 +40,10 @@ def run(config_name: str, CC: CommandLineConfig):
 
 
     '''Check saving destination's availability'''
-    savedir = f'./data/{C.savedir}'
-    pth = Path(savedir)
-    if pth.exists():
-        assert pth.is_dir(), 'Saving location is not directory'
-        assert os.listdir(str(pth)) == [], 'Saving directory not empty'
-    else:
-        ...
+    savedir = C.file_path("pfc")
+    if not CC.dry:
+        base.check_dir_empty(savedir, overwrite=CC.overwrite)
+
     console.log(f'saving directory: {savedir}')
 
 
@@ -74,14 +68,12 @@ def run(config_name: str, CC: CommandLineConfig):
 
         recs.append(rec)
 
-
     '''Save fields'''
     if not CC.dry:
         console.log(f'saving under {savedir}')
-        pth.mkdir(parents=True, exist_ok=True)
+        Path(savedir).mkdir(parents=True, exist_ok=True)
         tg.save(sol, f'{savedir}/unit_sol.field')
         tg.save(liq, f'{savedir}/unit_liq.field')
-
         with open(f'{savedir}/log.pkl', 'wb') as f:
             pickle.dump(recs, f)
 

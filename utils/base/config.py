@@ -9,6 +9,9 @@ from .. import global_cfg as G
 
 from .paths import get_path
 
+from rich import get_console
+console = get_console()
+
 
 class IHasToFloat(ABC):
 
@@ -145,8 +148,15 @@ class SpecifiesSimulationParams(ConfigBase, IHasToFloat):
 
 class CommandLineConfig:
     def __init__(self, args):
+
         self.plot: bool = args.plot
         self.dry: bool = args.dry
         self.overwrite: bool = args.overwrite
+
+        if self.dry:
+            console.log('[bold orange1]Dry run[/bold orange1]')
+
+        if self.overwrite:
+            console.log('[bold orange1]Existing data will be overwritten[/bold orange1]')
 
 

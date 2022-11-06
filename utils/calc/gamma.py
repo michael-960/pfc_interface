@@ -16,9 +16,17 @@ from .. import global_cfg as G
 
 
 def run(config_path: str, CC: CommandLineConfig):
+
     C = parse_config(config_path)
     console = get_console()
     fef = pfc.pfc6.FreeEnergyFunctional(C.eps_, C.alpha_, C.beta_)
+
+    
+    calc_file = f'{C.file_path("angle")}/{G.CALC_FILE}'
+    if (not CC.dry) and (not CC.overwrite):
+        if base.json_has_key(calc_file, 'gamma'):
+            raise base.DataExistsError(f'File {calc_file} already has key \'gamma\'')
+
 
     console.log(f'file prefix: {C.file_prefix("angle")}', highlight=False)
     console.log(f'theta={C.theta:.4f}')
@@ -107,9 +115,8 @@ def run(config_path: str, CC: CommandLineConfig):
 
         plt.show()
 
-
     if not CC.dry:
-        calc_file = f'{C.file_path("angle")}/{G.CALC_FILE}'
+
 
         base.put_val_into_json(
                 calc_file, 'gamma',
