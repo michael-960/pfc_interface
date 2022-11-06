@@ -34,7 +34,7 @@ The program follows the cycle of
 
 ## Generated Assets
 
-- `data/\[nx\]x\[ny\]/eps_\[eps\]/alpha_\[alpha\]/beta_\[beta\]/`
+- `data/[nx]x[ny]/eps_[eps]/alpha_[alpha]/beta_[beta]/
     - `log.pkl`: log file, contains a list of `MuSearchRecord` objects corresponding to each run
     - `unit_sol.field`: final unit cell solid field
     - `unit_liq.field`: final unit cell liquid field
@@ -78,7 +78,7 @@ The program follows the cycle of
     
 
 # `gen_interface`
-Make sure data/eps_\[epsilon\]/alpha_\[alpha\]/beta_\[beta\] is populated with
+Make sure data/eps_[epsilon]/alpha_[alpha]/beta_[beta] is populated with
 `unit_sol.field`, `unit_liq.field`, and `log.pkl`
 
 Generate a rotated long field for interface calculations (PFC6).
@@ -103,7 +103,7 @@ interface.
 
 ## Generated Assets
 
-- `data/\[nx\]x\[ny\]/eps_\[eps\]/alpha_\[alpha\]/beta_\[beta\]/theta_\[theta\]/`
+- `data/[nx]x[ny]/eps_[eps]/alpha_[alpha]/beta_[beta]/theta_[theta]/`
     - `liquid.field`: liquid field after rotation
     - `solid.field`: solid field after rotation
     - `long_liquid.field`: extended solid field
@@ -122,7 +122,7 @@ interface.
 
 - fftw_wisdoms: FFTW wisdom paths
 
-- n_step: (refer to `torusgrid.dynamics`)
+- n_step
 
 - mx, my: solid/liquid field extension factors
 
@@ -133,8 +133,8 @@ interface.
 
 ## Generated Assets
 
-- `data/\[nx\]x\[ny\]/eps_\[eps\]/alpha_\[alpha\]/beta_\[beta\]/theta_\[theta\]/interfaces/`
-    - `0000.field`, `0001.field`, ...: long interface fields
+- `data/[nx]x[ny]/eps_[eps]/alpha_[alpha]/beta_[beta]/theta_[theta]/interfaces/`
+    - `0000.field`, `0001.field`, ... : long interface fields
 
 ## Parameters
 
