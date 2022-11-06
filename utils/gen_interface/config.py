@@ -67,13 +67,6 @@ class InterfaceGenConfig(
         self.mu_ = self.log[-1].mu[-1]
 
 
-    def file_prefix(self, with_angle: bool = False):
-        if not with_angle:
-            return base.get_path(self.nx, self.ny, self.eps, self.alpha, self.beta)
-        else:
-            return base.get_path(self.nx, self.ny, self.eps, self.alpha, self.beta, self.na, self.nb)
-
-
 def parse_config(fname: str='./config.yaml') -> InterfaceGenConfig:
 
     with open(fname, 'r') as f:

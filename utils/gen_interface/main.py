@@ -8,15 +8,18 @@ import pyfftw
 from .config import parse_config
 
 from .. import base
+from ..base import CommandLineConfig
 
 
-def run(config_name: str, *, dry: bool = False):
+def run(
+    config_path: str, CC: CommandLineConfig
+):
     console = rich.get_console()
-    if dry:
+    if CC.dry:
         console.log('[bold bright_cyan]Dry run[/bold bright_cyan]')
 
 
-    C = parse_config(config_name)
+    C = parse_config(config_path)
 
     for wisdom in C.fftw_wisdoms:
         pyfftw.import_wisdom(wisdom)
@@ -27,8 +30,8 @@ def run(config_name: str, *, dry: bool = False):
     '''Log parameters'''
     console.rule(title='0. Config Parameters')
 
-    savedir_with_angle = f'./data/{C.file_prefix(True)}'
-    savedir = f'./data/{C.file_prefix()}'
+    savedir = C.file_path("pfc")
+    savedir_with_angle = C.file_path("angle")
 
     console.log(f'reading from {savedir}')
     console.log(f'saving to {savedir_with_angle}')
@@ -198,7 +201,7 @@ def run(config_name: str, *, dry: bool = False):
 
 
     '''5. Save fields'''
-    if not dry:
+    if not CC.dry:
         console.log(f'saving under {savedir_with_angle}')
         Path(savedir_with_angle).mkdir(parents=True, exist_ok=True)
 

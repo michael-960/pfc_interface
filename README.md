@@ -21,7 +21,7 @@ python main.py MODULE -c CONFIG [--dry]
 # `unit_cell`
 
 Generate and evolve unit cells under constant chemical potential $\mu$.
-The $mu$ such that liquid and relaxed solid have the same grand potential will
+The $\mu$ such that liquid and relaxed solid have the same grand potential will
 also be searched for.
 
 The program follows the cycle of
@@ -31,6 +31,13 @@ The program follows the cycle of
 3. Resize liquid unit cell to match solid's, and minimize under $\mu$
 4. Compute $\omega_l$ and $\omega_s$
 5. Repeat until the range of $\mu$ is narrower than the desired precision.
+
+## Generated Assets
+
+- `data/\[nx\]x\[ny\]/eps_\[eps\]/alpha_\[alpha\]/beta_\[beta\]/`
+    - `log.pkl`: log file, contains a list of `MuSearchRecord` objects corresponding to each run
+    - `unit_sol.field`: final unit cell solid field
+    - `unit_liq.field`: final unit cell liquid field
 
 
 ## Parameters
@@ -45,6 +52,7 @@ The program follows the cycle of
 - fftw_wisdoms: FFTW wisdom paths
 
 - runs: Each session can have multiple runs, see below
+
 
 ### Per-Run Parameters
 - precision: floating point precision
@@ -70,13 +78,39 @@ The program follows the cycle of
     
 
 # `gen_interface`
-This is the entry point of the interface module of NPFC/PFC6.
-Make sure data/eps_[epsilon]/alpha_[alpha]/ is populated with unit_sol.field and unit_liq.field
+Make sure data/eps_\[epsilon\]/alpha_\[alpha\]/beta_\[beta\] is populated with
+`unit_sol.field`, `unit_liq.field`, and `log.pkl`
 
 Generate a rotated long field for interface calculations (PFC6).
 
-## Parameters
+This module follows the following procedure to generate a solid-liquid
+interface.
 
+1. Generate rotated unit cells
+
+2. Minimize rotated solid and liquid unit cells
+    - runs constant chemcial potential minimization on the generated solid and liquid unit cells
+    - mu is manually specified in glnobal_config.py
+
+3. Elongate solid and liquid
+
+4. Minimize long solid and liquid fields
+    - runs nonlocal conserved RK4 minimization on long solid and liquid fields
+
+5. Make interface
+
+6. Save fields
+
+## Generated Assets
+
+- `data/\[nx\]x\[ny\]/eps_\[eps\]/alpha_\[alpha\]/beta_\[beta\]/theta_\[theta\]/`
+    - `liquid.field`: liquid field after rotation
+    - `solid.field`: solid field after rotation
+    - `long_liquid.field`: extended solid field
+    - `long_solid.field`: extend liquid field
+    - `interface.field`: interface field
+
+## Parameters
 
 - precision: floating point precision
 
@@ -95,31 +129,13 @@ Generate a rotated long field for interface calculations (PFC6).
 
 - width: Generated interface width
 
-
-
-1. Generate rotated unit cells
-
-2. Minimize rotated solid and liquid unit cells
-    - runs constant chemcial potential minimization on the generated solid and liquid unit cells
-    - mu is manually specified in global_config.py
-
-3. Elongate solid and liquid
-
-4. Minimize long solid and liquid fields
-    - runs nonlocal conserved RK4 minimization on long solid and liquid fields
-
-5. Make interface
-
-6. Save fields
-    - saved assets:
-        - [file_prefix]/interface.field     interface field file
-        - [file_prefix]/solid.field         solid field file
-        - [file_prefix]/liquid.field        liquid field file
-
-
 # `run_interface`
 
-## Parameters
+## Generated Assets
 
+- `data/\[nx\]x\[ny\]/eps_\[eps\]/alpha_\[alpha\]/beta_\[beta\]/theta_\[theta\]/interfaces/`
+    - `0000.field`, `0001.field`, ...: long interface fields
+
+## Parameters
 
 

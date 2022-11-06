@@ -1,0 +1,20 @@
+
+
+precision: double
+
+nx: 32
+ny: 16
+
+eps: '0.1'
+alpha: '0.0'
+beta: '0.0'
+
+na: -1
+nb: 1
+
+
+lx_min: '1000'
+lx_max: 'inf'
+
+
+

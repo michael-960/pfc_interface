@@ -23,17 +23,10 @@ class InterfaceRunConfig(
         self.alpha_ = self.to_float(self.alpha)
         self.beta_ = self.to_float(self.beta)
 
-    def file_prefix(
-        self,
-        with_angle: bool = False
-    ):
-        if not with_angle:
-            return base.get_path(self.nx, self.ny, self.eps, self.alpha, self.beta)
-        else:
-            return base.get_path(self.nx, self.ny, self.eps, self.alpha, self.beta, self.na, self.nb)
-
 
 def parse_config(config_name: str = './config.yaml'):
     with open(config_name, 'r') as f:
         config = yaml.safe_load(f)
     return InterfaceRunConfig(config)
+
+

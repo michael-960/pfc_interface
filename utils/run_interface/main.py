@@ -7,42 +7,46 @@ from pathlib import Path
 
 from .config import parse_config
 
-from .data import get_interface_list
+from .. import global_cfg as G
+
+from .. import base
+from ..base import CommandLineConfig
 
 
-def run(config_name: str, *, dry: bool = False):
+def run(config_path: str, CC: CommandLineConfig):
+
     console = rich.get_console()
-    if dry:
+    if CC.dry:
         console.log('[bold bright_cyan]Dry run[/bold bright_cyan]')
 
-    C = parse_config(config_name)
+    C = parse_config(config_path)
 
     for wisdom in C.fftw_wisdoms:
         pyfftw.import_wisdom(wisdom)
 
-    if dry: print('dry run')
+    if CC.dry: print('dry run')
 
-    console.log(f'Saving directory: data/{C.file_prefix(True)}')
+    console.log(f'Saving directory: {C.file_path("angle")}')
 
-    ifc = tg.load(tg.RealField2D, f'./data/{C.file_prefix(True)}/interface.field')
-    solid = tg.load(tg.RealField2D, f'./data/{C.file_prefix(True)}/solid.field')
-    liquid = tg.load(tg.RealField2D, f'./data/{C.file_prefix(True)}/liquid.field')
+    ifc = tg.load(tg.RealField2D, f'{C.file_path("angle")}/interface.field')
+    solid = tg.load(tg.RealField2D, f'{C.file_path("angle")}/solid.field')
+    liquid = tg.load(tg.RealField2D, f'{C.file_path("angle")}/liquid.field')
 
     delta_sol = tg.extend(solid, (C.mx_delta, C.my))
     delta_liq = tg.extend(liquid, (C.mx_delta, C.my))
 
     ######################################################################################################
-    ifc_loaders = get_interface_list(f'./data/{C.file_prefix(True)}/interfaces')
+    ifc_loaders = base.get_interface_list(f'{C.file_path("angle")}/{G.INTERFACES_DIR}')
 
     n_ifcs = len(ifc_loaders)
     i = n_ifcs
     
     if n_ifcs > 0:
-        console.log(f'continuing in data/{C.file_prefix(True)}/interfaces/, found {n_ifcs} interface fields')
+        console.log(f'continuing in {C.file_path("angle")}/interfaces/, found {n_ifcs} interface fields')
         ifc = ifc_loaders[-1]()
     else:
         console.log(f'No previous interfaces found, starting fresh')
-        Path(f'data/{C.file_prefix(True)}/interfaces').mkdir(exist_ok=True)
+        Path(f'/{C.file_path("angle")}/interfaces').mkdir(exist_ok=True)
 
     def minim_supplier(field: tg.RealField2D):
         m = pfc.pfc6.NonlocalConservedRK4(field, C.dt, C.eps_, C.alpha_, C.beta_)
@@ -78,8 +82,8 @@ def run(config_name: str, *, dry: bool = False):
         console.log(f'evolved size={ifc.size} shape={ifc.shape}')
         console.log(f'elongated to size={ifc2.size} shape={ifc2.shape}')
 
-        if not dry:
-            field_path = f'data/{C.file_prefix(True)}/interfaces/{i:04d}.field'
+        if not CC.dry:
+            field_path = f'{C.file_path("angle")}/{G.INTERFACES_DIR}/{i:04d}.field'
             tg.save(ifc, field_path)
             console.log(f'saved interface to {field_path}')
 

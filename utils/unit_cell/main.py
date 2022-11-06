@@ -7,16 +7,20 @@ from pathlib import Path
 import rich
 import pyfftw
 
+
+
 from .config import parse_config
 from .singlerun import run_single
 
+from ..base import CommandLineConfig
 
 
-def run(config_name: str, *, dry: bool = False):
+
+def run(config_name: str, CC: CommandLineConfig):
     console = rich.get_console()
     C = parse_config(config_name)
 
-    if dry:
+    if CC.dry:
         console.log('[bold bright_cyan]Dry run[/bold bright_cyan]')
 
 
@@ -72,7 +76,7 @@ def run(config_name: str, *, dry: bool = False):
 
 
     '''Save fields'''
-    if not dry:
+    if not CC.dry:
         console.log(f'saving under {savedir}')
         pth.mkdir(parents=True, exist_ok=True)
         tg.save(sol, f'{savedir}/unit_sol.field')

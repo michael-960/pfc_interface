@@ -1,9 +1,13 @@
 from __future__ import annotations
 from abc import ABC, abstractmethod
-from typing import List
+from typing import List, Literal
 import torusgrid as tg
 import pfc_util as pfc
 import pickle
+
+from .. import global_cfg as G
+
+from .paths import get_path
 
 
 class IHasToFloat(ABC):
@@ -15,6 +19,35 @@ class IHasToFloat(ABC):
 class ConfigBase:
     def __init__(self, config: dict):
         ...
+
+
+    def file_path(
+            self, 
+            depth: Literal['shape', 'pfc', 'angle', 'interfaces']):
+
+        return G.DATA_DIR + '/' + self.file_prefix(depth)
+
+    def file_prefix(
+            self, 
+            depth: Literal['shape', 'pfc', 'angle', 'interfaces']) -> str:
+
+        if depth == 'shape':
+            return get_path(self.nx, self.ny) # type: ignore
+
+        if depth == 'pfc':
+            return get_path(self.nx, self.ny, self.eps,  # type: ignore
+                            self.alpha, self.beta) # type: ignore
+
+        if depth == 'angle':
+            return get_path(self.nx, self.ny, self.eps, # type: ignore
+                            self.alpha, self.beta, self.na, self.nb) # type: ignore
+
+        if depth == 'interfaces':
+            return get_path(
+                    self.nx, self.ny, self.eps, # type: ignore
+                    self.alpha, self.beta, self.na, self.nb # type: ignore
+                    ) + '/' + G.INTERFACES_DIR
+
 
 
 class SpecifiesShape(ConfigBase):
@@ -108,5 +141,12 @@ class SpecifiesSimulationParams(ConfigBase, IHasToFloat):
         self.fft_threads = int(config['fft_threads'])
         self.wisdom_only = bool(config['wisdom_only'])
 
+
+
+class CommandLineConfig:
+    def __init__(self, args):
+        self.plot: bool = args.plot
+        self.dry: bool = args.dry
+        self.overwrite: bool = args.overwrite
 
 
