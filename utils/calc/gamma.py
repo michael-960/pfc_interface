@@ -112,6 +112,8 @@ def run(config_path: str, CC: CommandLineConfig):
         axs[0,1].set_ylabel('f')
 
         axs[1,0].scatter(Lx_ar, (omega_l-omega_s)*Vol_ar / Ly_ar / 2, color='k')
+        axs[1,0].set_xlabel('L')
+        axs[1,0].set_ylabel('(omega_l - omega_s)V / (2Ly)')
 
         plt.show()
 
