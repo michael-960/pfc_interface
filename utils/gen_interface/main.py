@@ -5,19 +5,42 @@ import pfc_util as pfc
 import rich
 import pyfftw
 
-from .config import parse_config
+from .config import InterfaceGenConfig, parse_config
 import os
 
 from .. import base
 from ..base import CommandLineConfig
+from .. import global_cfg as G
 
 
-def run(
-    config_path: str, CC: CommandLineConfig
-):
+def run(config_path: str, CC: CommandLineConfig):
+    C = parse_config(config_path)
     console = rich.get_console()
 
-    C = parse_config(config_path)
+    savedir = C.file_path('angle')
+    
+    _running_marker = Path(savedir + '/' + G.RUNNING_FILE)
+    
+    if _running_marker.exists():
+        console.log(f'{str(_running_marker.parent)} is already occupied by another process. Aborted.', style='bold red', highlight=False)
+        return
+
+    if not CC.dry:
+        Path(savedir).mkdir(parents=True, exist_ok=True)
+        base.check_dir_empty(savedir, overwrite=CC.overwrite)
+
+    try:
+        if not CC.dry:
+            _running_marker.touch()
+        _run(C, CC)
+    finally:
+        if not CC.dry:
+            os.remove(_running_marker)
+
+
+def _run(C: InterfaceGenConfig, CC: CommandLineConfig):
+    console = rich.get_console()
+
 
     for wisdom in C.fftw_wisdoms:
         pyfftw.import_wisdom(wisdom)
@@ -29,10 +52,6 @@ def run(
 
     savedir = C.file_path("pfc")
     savedir_with_angle = C.file_path("angle")
-    if not CC.dry:
-        base.check_dir_empty(savedir_with_angle, overwrite=CC.overwrite)
-
-
 
     console.log(f'reading from {savedir}')
     console.log(f'saving to {savedir_with_angle}')
@@ -223,4 +242,5 @@ def run(
         tg.save(long_liq, f'{savedir_with_angle}/long_liquid.field')
 
         tg.save(ifc, f'{savedir_with_angle}/interface.field')
+
 

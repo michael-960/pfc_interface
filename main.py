@@ -4,7 +4,6 @@ import utils
 
 parser = ArgumentParser()
 
-
 parser.add_argument('command', 
                     choices=[
                         'uc', 'unit_cell',
@@ -53,6 +52,5 @@ if args.command in ['cg', 'calc_gamma']:
 
 if args.command in ['cw', 'calc_width']:
     utils.calc.width.run(args.config, CC)
-
 
 

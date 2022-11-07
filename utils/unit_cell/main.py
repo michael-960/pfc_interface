@@ -7,19 +7,45 @@ from pathlib import Path
 import rich
 import pyfftw
 
-
-
-from .config import parse_config
+from .config import UnitCellSimulationConfig, parse_config
 from .singlerun import run_single
 
 from ..base import CommandLineConfig
 from .. import base
 
+from .. import global_cfg as G
+
 
 
 def run(config_name: str, CC: CommandLineConfig):
-    console = rich.get_console()
     C = parse_config(config_name)
+    console = rich.get_console()
+    savedir = C.file_path('pfc')
+    
+    
+    _running_marker = Path(savedir + '/' + G.RUNNING_FILE)
+    
+    if _running_marker.exists():
+        console.log(f'{str(_running_marker.parent)} is already occupied by another process. Aborted.', style='bold red', highlight=False)
+        return
+
+    if not CC.dry:
+        Path(savedir).mkdir(parents=True, exist_ok=True)
+        base.check_dir_empty(savedir, overwrite=CC.overwrite)
+
+    try:
+        if not CC.dry:
+            _running_marker.touch()
+        _run(C, CC)
+
+    finally:
+        if not CC.dry:
+            os.remove(_running_marker)
+    
+
+def _run(C: UnitCellSimulationConfig, CC: CommandLineConfig):
+
+    console = rich.get_console()
 
     '''Load FFTW wisdoms'''
     for wisdom in C.fftw_wisdoms:
@@ -38,12 +64,8 @@ def run(config_name: str, CC: CommandLineConfig):
     '''Make liquid'''
     liq = tg.const_like(sol)
 
-
-    '''Check saving destination's availability'''
+    '''Saving destination'''
     savedir = C.file_path("pfc")
-    if not CC.dry:
-        base.check_dir_empty(savedir, overwrite=CC.overwrite)
-
     console.log(f'saving directory: {savedir}')
 
 
@@ -71,7 +93,6 @@ def run(config_name: str, CC: CommandLineConfig):
     '''Save fields'''
     if not CC.dry:
         console.log(f'saving under {savedir}')
-        Path(savedir).mkdir(parents=True, exist_ok=True)
         tg.save(sol, f'{savedir}/unit_sol.field')
         tg.save(liq, f'{savedir}/unit_liq.field')
         with open(f'{savedir}/log.pkl', 'wb') as f:

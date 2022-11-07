@@ -5,8 +5,9 @@ import rich
 import pyfftw
 from pathlib import Path
 import shutil
+import os
 
-from .config import parse_config
+from .config import InterfaceRunConfig, parse_config
 
 from .. import global_cfg as G
 
@@ -15,10 +16,39 @@ from ..base import CommandLineConfig
 
 
 def run(config_path: str, CC: CommandLineConfig):
+    console = rich.get_console()
+    
+    C = parse_config(config_path)
+
+    savedir = C.file_path('interfaces')
+
+    if CC.overwrite:
+        console.input(f'[bold red]Passing --overwrite will erase all data under {savedir}, proceed?[/bold red]')
+        shutil.rmtree(savedir)
+        Path(savedir).mkdir()
+    
+    _running_marker = Path(savedir + '/' + G.RUNNING_FILE)
+    
+    if _running_marker.exists():
+        console.log(f'{str(_running_marker)} is already occupied by another process. Aborted.', style='bold red')
+        return
+
+    if not CC.dry:
+        Path(savedir).mkdir(parents=True, exist_ok=True)
+        base.check_dir_empty(savedir, overwrite=CC.overwrite)
+
+    try:
+        if not CC.dry:
+            _running_marker.touch()
+        _run(C, CC)
+    finally:
+        if not CC.dry:
+            os.remove(_running_marker)
+
+
+def _run(C: InterfaceRunConfig, CC: CommandLineConfig):
 
     console = rich.get_console()
-
-    C = parse_config(config_path)
 
     for wisdom in C.fftw_wisdoms:
         pyfftw.import_wisdom(wisdom)
@@ -34,24 +64,18 @@ def run(config_path: str, CC: CommandLineConfig):
 
     ######################################################################################################
     savedir = f'{C.file_path("angle")}/{G.INTERFACES_DIR}'
-    if CC.overwrite:
-        console.input(f'[bold red]Passing --overwrite will erase all data under {savedir}, proceed?[/bold red]')
-        shutil.rmtree(savedir)
-        Path(savedir).mkdir()
-
+    
     ifc_loaders = base.get_interface_list(savedir)
-
 
     n_ifcs = len(ifc_loaders)
     i = n_ifcs
     
     if n_ifcs > 0:
-        console.log(f'continuing in {C.file_path("angle")}/interfaces/, found {n_ifcs} interface fields')
+        console.log(f'continuing in {C.file_path("interfaces")}, found {n_ifcs} interface fields')
         ifc = ifc_loaders[-1]()
         ifc = pfc.toolkit.elongate_interface(ifc, delta_sol, delta_liq)
     else:
         console.log(f'No previous interfaces found, starting fresh')
-        Path(f'{C.file_path("angle")}/interfaces').mkdir(exist_ok=True)
 
     def minim_supplier(field: tg.RealField2D):
         m = pfc.pfc6.NonlocalConservedRK4(
@@ -92,7 +116,7 @@ def run(config_path: str, CC: CommandLineConfig):
         console.log(f'elongated to size={ifc2.size} shape={ifc2.shape}')
 
         if not CC.dry:
-            field_path = f'{C.file_path("angle")}/{G.INTERFACES_DIR}/{i:04d}.field'
+            field_path = f'{C.file_path("interfaces")}/{i:04d}.field'
             tg.save(ifc, field_path)
             console.log(f'saved interface to {field_path}')
 

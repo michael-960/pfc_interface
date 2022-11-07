@@ -129,9 +129,10 @@ def check_dir_empty(
         if not pth.is_dir():
             raise NotADirectoryError(f'Saving location {path} is not a directory')
 
-        if not (os.listdir(str(pth)) == []):
+        files = os.listdir(str(path))
+        if not (files == []):
             if (not overwrite):
-                raise DataExistsError('Saving directory not empty')
+                raise DataExistsError(f'Saving directory {path} not empty')
     else:
         if not absent_okay:
             raise FileNotFoundError(path)

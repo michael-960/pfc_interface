@@ -23,3 +23,5 @@ Directory storing the long interfaces
 """
 
 
+RUNNING_FILE = '.running'
+
