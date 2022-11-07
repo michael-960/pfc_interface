@@ -39,7 +39,7 @@ The program follows the cycle of
 
 ## Generated Assets
 
-- `data/[nx]x[ny]/eps_[eps]/alpha_[alpha]/beta_[beta]/
+- `data/[nx]x[ny]/eps_[eps]/alpha_[alpha]/beta_[beta]/`
     - `log.pkl`: log file, contains a list of `MuSearchRecord` objects corresponding to each run
     - `unit_sol.field`: final unit cell solid field
     - `unit_liq.field`: final unit cell liquid field
@@ -83,8 +83,7 @@ The program follows the cycle of
     
 
 # `gen_interface`
-Make sure data/eps_[epsilon]/alpha_[alpha]/beta_[beta] is populated with
-`unit_sol.field`, `unit_liq.field`, and `log.pkl`
+
 
 Generate a rotated long field for interface calculations (PFC6).
 
@@ -105,6 +104,12 @@ interface.
 5. Make interface
 
 6. Save fields
+
+## Prerequisites
+- `data/eps_[epsilon]/alpha_[alpha]/beta_[beta]/`
+    - `unit_sol.field`
+    - `unit_liq.field`
+    - `log.pkl`
 
 ## Generated Assets
 
@@ -131,10 +136,17 @@ interface.
 
 - mx, my: solid/liquid field extension factors
 
-
 - width: Generated interface width
 
 # `run_interface`
+
+## Prerequisites
+
+- `data/[nx]x[ny]/eps_[eps]/alpha_[alpha]/beta_[beta]/theta_[theta]/`
+    - `liquid.field`
+    - `solid.field`
+    - `interface.field`
+
 
 ## Generated Assets
 
