@@ -35,7 +35,7 @@ def run(config_path: str, CC: CommandLineConfig):
 
     if not CC.dry:
         Path(savedir).mkdir(parents=True, exist_ok=True)
-        base.check_dir_empty(savedir, overwrite=CC.overwrite)
+        # base.check_dir_empty(savedir, overwrite=CC.overwrite)
 
     try:
         if not CC.dry:
