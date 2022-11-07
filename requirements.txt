@@ -1,2 +1,2 @@
-pfc-util>=0.4.7
+pfc-util>=0.4.8
 pyyaml>=6.0
