@@ -48,12 +48,17 @@ def run(config_path: str, CC: CommandLineConfig):
     if n_ifcs > 0:
         console.log(f'continuing in {C.file_path("angle")}/interfaces/, found {n_ifcs} interface fields')
         ifc = ifc_loaders[-1]()
+        ifc = pfc.toolkit.elongate_interface(ifc, delta_sol, delta_liq)
     else:
         console.log(f'No previous interfaces found, starting fresh')
         Path(f'{C.file_path("angle")}/interfaces').mkdir(exist_ok=True)
 
     def minim_supplier(field: tg.RealField2D):
-        m = pfc.pfc6.NonlocalConservedRK4(field, C.dt, C.eps_, C.alpha_, C.beta_, )
+        m = pfc.pfc6.NonlocalConservedRK4(
+                field, 
+                C.dt, C.eps_, C.alpha_, C.beta_,
+                inertia=C.inertia_, k_regularizer=C.k_regularizer_)
+
         m.initialize_fft(
                 threads=C.fft_threads,
                 wisdom_only=C.wisdom_only,
@@ -93,5 +98,4 @@ def run(config_path: str, CC: CommandLineConfig):
 
         ifc = ifc2
         i += 1
-
 

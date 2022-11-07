@@ -8,12 +8,16 @@ eps: '0.1'
 alpha: '0.0'
 beta: '1.0'
 
+inertia: '200'
+k_regularizer: '0.1'
+
 na: -1
 nb: 1
 
 mx_delta: 8
 mx: 128
 my: 2
+
 
 dt: '1.e-3'
 target: F

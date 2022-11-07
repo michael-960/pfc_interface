@@ -4,6 +4,8 @@ import yaml
 
 
 class InterfaceRunConfig(
+    base.SpecifiesInertia,
+    base.SpecifiesKRegularizer,
     base.SpecifiesFFTWisdoms,
     base.SpecifiesSimulationParams,
     base.SpecifiesRotationAngle,
@@ -22,6 +24,9 @@ class InterfaceRunConfig(
         self.eps_ = self.to_float(self.eps)
         self.alpha_ = self.to_float(self.alpha)
         self.beta_ = self.to_float(self.beta)
+
+        self.inertia_ = self.to_float(self.inertia)
+        self.k_regularizer_ = self.to_float(self.k_regularizer)
 
 
 def parse_config(config_path: str):
