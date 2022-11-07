@@ -21,6 +21,8 @@ class BaseFieldConfig(
 class LongFieldConfig(
     base.SpecifiesSimulationParams,
     base.SpecifiesPrecision,
+    base.SpecifiesKRegularizer,
+    base.SpecifiesInertia,
     base.ConfigBase
 ):
     def __init__(self, config: dict) -> None:
@@ -28,6 +30,9 @@ class LongFieldConfig(
         super().__init__(config)
         self.mx = int(config['mx'])
         self.my = int(config['my'])
+
+        self.k_regularizer_ = self.to_float(self.k_regularizer)
+        self.inertia_ = self.to_float(self.inertia)
 
         if isinstance(config['width'], list):
             self.width = [self.to_float(w) for w in config['width']]

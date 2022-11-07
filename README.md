@@ -6,16 +6,21 @@ generates, evolves, and stores PFC solid, liquid, and interface profiles.
 The principal objective is to measure the interfacial energy $\gamma$, interface width $w$, and 
 the anisotropy parameter $\alpha_\gamma$.
 
-Currently it contains three main modules:
+Currently it contains 5 modules:
 
 - `unit_cell`: Generate liquid and solid unit cells in equilibrium
 - `gen_interface`: Generate interfaces
 - `run_interface`: Generate a
-
+- `calc_gamma`: Calculate interfacial energy
+- `calc_width`: Calculate interface widths
 
 ```
-python main.py MODULE -c CONFIG [--dry]
+python main.py MODULE -c CONFIG [-d/--dry] [-p,--plot] [-O,--overwrite] 
 ```
+
+The config files should follow the same format as specified in
+`configs_example/`, custom configs should be placed under `configs/` (which is
+not tracked).
 
 
 # `unit_cell`

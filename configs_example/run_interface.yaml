@@ -6,16 +6,14 @@ ny: 16
 
 eps: '0.1'
 alpha: '0.0'
-beta: '0.0'
+beta: '1.0'
 
 na: -1
 nb: 1
 
-
 mx_delta: 8
 mx: 128
 my: 2
-
 
 dt: '1.e-3'
 target: F
@@ -24,22 +22,10 @@ patience: 200
 
 fft_threads: 4
 wisdom_only: True
-fftw_wisdoms:
-  - /home/mike/Data/labdata/FFT/turnbull2/1024x32_246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/4096x32_246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/4608x32_246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/5120x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/5632x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/6144x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/6656x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/7168x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/7680x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/8192x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/9216x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/10240x32_1246.pkl
-  - /home/mike/Data/labdata/FFT/turnbull2/12288x32_1246.pkl
-
+fftw_wisdoms: []
 
 n_steps: 31
 refresh_interval: 1
 fps: 6
+
+

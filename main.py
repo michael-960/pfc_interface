@@ -7,8 +7,11 @@ parser = ArgumentParser()
 
 parser.add_argument('command', 
                     choices=[
-                        'unit_cell', 'gen_interface', 'run_interface',
-                        'calc_gamma', 'calc_width'],
+                        'uc', 'unit_cell',
+                        'gi', 'gen_interface',
+                        'ri', 'run_interface',
+                        'cg', 'calc_gamma',
+                        'cw', 'calc_width'],
                     type=str)
 
 parser.add_argument('-c', '--config', 
@@ -36,19 +39,19 @@ args = parser.parse_args()
 
 CC = utils.CommandLineConfig(args)
 
-if args.command == 'unit_cell':
+if args.command in ['uc' ,'unit_cell']:
     utils.unit_cell.run(args.config, CC)
 
-if args.command == 'gen_interface':
+if args.command in ['gi', 'gen_interface']:
     utils.gen_interface.run(args.config, CC)
 
-if args.command == 'run_interface':
+if args.command in ['ri', 'run_interface']:
     utils.run_interface.run(args.config, CC)
 
-if args.command == 'calc_gamma':
+if args.command in ['cg', 'calc_gamma']:
     utils.calc.gamma.run(args.config, CC)
 
-if args.command == 'calc_width':
+if args.command in ['cw', 'calc_width']:
     utils.calc.width.run(args.config, CC)
 
 

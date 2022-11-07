@@ -145,6 +145,17 @@ class SpecifiesSimulationParams(ConfigBase, IHasToFloat):
         self.wisdom_only = bool(config['wisdom_only'])
 
 
+class SpecifiesKRegularizer(ConfigBase):
+    def __init__(self, config: dict):
+        super().__init__(config)
+        self.k_regularizer = str(config['k_regularizer'])
+
+
+class SpecifiesInertia(ConfigBase):
+    def __init__(self, config: dict):
+        super().__init__(config)
+        self.inertia = str(config['inertia'])
+
 
 class CommandLineConfig:
     def __init__(self, args):

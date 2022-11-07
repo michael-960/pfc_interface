@@ -137,14 +137,20 @@ def run(
     )
 
     console.log('Minimizing long solid ...')
-    m = pfc.pfc6.NonlocalConservedRK4(long_sol, C.long.dt, C.eps_, C.alpha_, C.beta_)
+    m = pfc.pfc6.NonlocalConservedRK4(
+            long_sol, C.long.dt,
+            C.eps_, C.alpha_, C.beta_,
+            inertia=C.long.inertia_, k_regularizer=C.long.k_regularizer_)
     m.initialize_fft(threads=C.long.fft_threads,
                      wisdom_only=C.long.wisdom_only,
                      destroy_input=True)
     m.run(C.long.n_steps, hooks_long)
 
     console.log('Minimizing long liquid ...')
-    m = pfc.pfc6.NonlocalConservedRK4(long_liq, C.long.dt, C.eps_, C.alpha_, C.beta_)
+    m = pfc.pfc6.NonlocalConservedRK4(
+            long_liq, C.long.dt,
+            C.eps_, C.alpha_, C.beta_,
+            inertia=C.long.inertia_, k_regularizer=C.long.k_regularizer_)
     m.initialize_fft(threads=C.long.fft_threads,
                      wisdom_only=C.long.wisdom_only,
                      destroy_input=True)
@@ -190,7 +196,11 @@ def run(
         ifc = tg.blend(long_sol, long_liq, axis=0, interface_width=C.long.width)
 
     console.log('Minimizing interface ...')
-    m = pfc.pfc6.NonlocalConservedRK4(ifc, C.dt, C.eps_, C.alpha_, C.beta_)
+    m = pfc.pfc6.NonlocalConservedRK4(
+            ifc, C.long.dt,
+            C.eps_, C.alpha_, C.beta_,
+            inertia=C.long.inertia_, k_regularizer=C.long.k_regularizer_)
+
     m.initialize_fft(threads=C.long.fft_threads,
                      wisdom_only=C.long.wisdom_only,
                      destroy_input=True)

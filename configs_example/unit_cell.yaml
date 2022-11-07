@@ -15,17 +15,15 @@ ny: 16
 # PFC parameters
 eps: '0.1'
 alpha: '0.0'
-beta: '0.0'
+beta: '1.0'
 
 # mu search parameters
-mu_min: '0.194'
-mu_max: '0.196'
+mu_min: '0.17'
+mu_max: '0.192'
 
 
 # a list of wisdom files to use
-fftw_wisdoms: 
-    - '/home/mike/Data/labdata/FFT/turnbull2/32x16_1246.pkl'
-
+fftw_wisdoms: []
 
 
 # Multiple minimization routines can be scheduled

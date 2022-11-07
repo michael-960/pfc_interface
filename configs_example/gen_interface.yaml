@@ -11,16 +11,13 @@ alpha: '0.0'
 beta: '0.0' # no need to specify mu, it will be read from log.pkl
 
 
-
-# 
-na: -1
+# Rotation
+na: 1
 nb: 1
 
 dt: '1e-3'
 
-fftw_wisdoms:
-  - '/home/mike/Data/labdata/FFT/turnbull2/4096x32_246.pkl'
-  - '/home/mike/Data/labdata/FFT/turnbull2/32x16_1246.pkl'
+fftw_wisdoms: []
 
 # liquid solid base fields minimization
 base:
@@ -36,13 +33,16 @@ base:
   fft_threads: 1
   wisdom_only: true
 
-
+    
 # liquid, solid, & interface long fields minimization
 long:
 
+  inertia: '200'
+  k_regularizer: '0.1'
+
   # solid & liquid field extension factor
-  mx: 128
-  my: 2
+  mx: 256
+  my: 1
 
   # can be a single number or a list
   # if a list is given, the width with the least energy will be used
