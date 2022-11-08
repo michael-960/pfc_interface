@@ -5,7 +5,6 @@ from .data import put_val
 
 def collect(root: str):
 
-
     data_path = Path(G.DATA_DIR)
     root_path = Path(root)
 

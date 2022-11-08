@@ -15,6 +15,9 @@ parse_status = subparsers.add_parser('status')
 parse_collect = subparsers.add_parser('collect')
 parse_collect.add_argument('root')
 
+parse_collect.add_argument('-n', '--no-highlight', action='store_true')
+
+
 args = parser.parse_args()
 
 if args.command == 'status':
@@ -23,5 +26,12 @@ if args.command == 'status':
 
 if args.command == 'collect':
     d = utils.collect(args.root)
-    console.print(json.dumps(d, indent=4))
+
+    s = json.dumps(d, indent=4)
+
+    if args.no_highlight:
+        print(s)
+    else:
+        console.print(s)
+
 
