@@ -85,10 +85,18 @@ def _run(C: UnitCellSimulationConfig, CC: CommandLineConfig):
 
         sol, liq, rec = run_single(cfg, mu_min, mu_max, sol)
 
+        if pfc.is_liquid(sol.psi, tol=cfg.liquid_tol):
+            console.log(f'[bold red]Solid field has been liquefied.[/bold red]')
+            console.log(f'[bold red]Results will not be saved.[/bold red]')
+            console.log(f'[bold red]Aborted.[/bold red]')
+            return
+
         mu_min = rec.lower_bound - cfg.expand_range
         mu_max = rec.upper_bound + cfg.expand_range
 
+
         recs.append(rec)
+
 
     '''Save fields'''
     if not CC.dry:

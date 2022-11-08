@@ -27,6 +27,8 @@ class UnitCellSingleRunConfig(
 
         self.expand_range = self.to_float(config['expand_range'])
 
+        self.liquid_tol = self.to_float(config['liquid_tol'])
+
         if str(config['search_method']) == 'binary':
             self.search_method = 'binary'
         else:
@@ -54,12 +56,14 @@ class UnitCellSimulationConfig(
         self.mu_min = str(config['mu_min'])
         self.mu_max = str(config['mu_max'])
 
+        self.liquid_tol = str(config['liquid_tol'])
+
         self.runs: List[UnitCellSingleRunConfig] = []
 
         for run_config in config['runs']:
             self.runs.append(
                 UnitCellSingleRunConfig(
-                    base.Fallback(run_config, config, ['eps', 'alpha', 'beta'])
+                    base.Fallback(run_config, config, ['eps', 'alpha', 'beta', 'liquid_tol'])
                 )
             )
 

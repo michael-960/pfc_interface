@@ -56,6 +56,14 @@ def run_single(
         fps=12
     )
 
+
+    hooks = hooks + (
+            tg.dynamics.MonitorValues[tg.dynamics.FieldEvolver[tg.RealField2D]](
+                {'psi_delta': lambda e: e.field.psi.max() - e.field.psi.min()}
+            ) +
+            tg.dynamics.Text('psi_delta: {psi_delta:.4e}')
+            )
+
     rec = pfc.toolkit.find_coexistent_mu(
         sol, mu_min, mu_max, fef,
         relaxer_supplier=relaxer_supplier,
@@ -63,7 +71,8 @@ def run_single(
         const_mu_supplier=const_mu_supplier,
         const_mu_hooks=hooks, const_mu_nsteps=cfg.n_steps,
         precision=cfg.mu_precision,
-        search_method=cfg.search_method
+        search_method=cfg.search_method,
+        liquid_tol=cfg.liquid_tol
     )
 
     liq = tg.const_like(sol)
