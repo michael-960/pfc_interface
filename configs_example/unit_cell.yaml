@@ -53,6 +53,9 @@ runs:
     # Whether to expand the range of mu after run.
     expand_range: '0.'
 
+    # maximum number of trials if solid liquefies
+    max_trials: 5   
+
     
   # - precision: longdouble
   #
@@ -77,4 +80,5 @@ runs:
   #
   #   expand_range: '0.'
   #
-  #
+  #   # maximum number of trials if solid liquefies
+  #   max_trials: 5   
