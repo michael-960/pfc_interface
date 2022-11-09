@@ -63,7 +63,7 @@ def run_single(
             ) +
             tg.dynamics.Text('psi_delta: {psi_delta:.4e}')
             )
-
+    
     rec = pfc.toolkit.find_coexistent_mu(
         sol, mu_min, mu_max, fef,
         relaxer_supplier=relaxer_supplier,
@@ -72,7 +72,8 @@ def run_single(
         const_mu_hooks=hooks, const_mu_nsteps=cfg.n_steps,
         precision=cfg.mu_precision,
         search_method=cfg.search_method,
-        liquid_tol=cfg.liquid_tol
+        liquid_tol=cfg.liquid_tol,
+        error_if_liquefied=True
     )
 
     liq = tg.const_like(sol)

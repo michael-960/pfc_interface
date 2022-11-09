@@ -61,9 +61,6 @@ def _run(C: UnitCellSimulationConfig, CC: CommandLineConfig):
         console.log(f'Source field already has the configured shape {C.source_field.shape}')
 
 
-    '''Make liquid'''
-    liq = tg.const_like(sol)
-
     '''Saving destination'''
     savedir = C.file_path("pfc")
     console.log(f'saving directory: {savedir}')
@@ -76,6 +73,8 @@ def _run(C: UnitCellSimulationConfig, CC: CommandLineConfig):
 
     mu_max = C.mu_max
     mu_min = C.mu_min
+
+    liq = None
     for i, cfg in enumerate(C.runs):
         console.rule(style='orange3')
         console.log(f'Run {i+1}/{len(C.runs)}')
@@ -83,20 +82,40 @@ def _run(C: UnitCellSimulationConfig, CC: CommandLineConfig):
         mu_max = cfg.dtype(mu_max)
         mu_min = cfg.dtype(mu_min)
 
-        sol, liq, rec = run_single(cfg, mu_min, mu_max, sol)
+        _solid_psi_copy = sol.psi.copy()
 
+        rec = None
+        for j in range(cfg.max_trials):
+            console.log(f'[bold orange1]Trial {j+1}/{cfg.max_trials}[bold orange1]')
+            try:
+                sol, liq, rec = run_single(cfg, mu_min, mu_max, sol)
+                break
+
+            except pfc.toolkit.LiquefiedError as e:
+
+                rec = e.mu_rec
+                recs.append(e.mu_rec)
+
+                sol.psi[...] = _solid_psi_copy
+
+                mu_min = rec.lower_bound
+                mu_max = e.mu
+
+        # if solid is still liquefied after max_trials, abort
         if pfc.is_liquid(sol.psi, tol=cfg.liquid_tol):
             console.log(f'[bold red]Solid field has been liquefied.[/bold red]')
             console.log(f'[bold red]Results will not be saved.[/bold red]')
             console.log(f'[bold red]Aborted.[/bold red]')
             return
 
+        assert rec is not None
+
         mu_min = rec.lower_bound - cfg.expand_range
         mu_max = rec.upper_bound + cfg.expand_range
 
-
         recs.append(rec)
 
+    assert liq is not None
 
     '''Save fields'''
     if not CC.dry:

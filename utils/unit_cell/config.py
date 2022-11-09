@@ -34,6 +34,8 @@ class UnitCellSingleRunConfig(
         else:
             self.search_method = 'interpolate'
 
+        self.max_trials = int(config['max_trials'])
+
 
 @final
 class UnitCellSimulationConfig(
